@@ -1,0 +1,12 @@
+{
+    "cSpell.words": [
+        "nombre"
+    ],
+    "emmet.preferences": {
+        
+    },
+    "emmet.includeLanguages": {
+        "javascript": "javascriptreact"
+    },
+    "emmet.triggerExpansionOnTab": true
+}

@@ -1,0 +1,14 @@
+export { default as Login } from './Login';
+export { default as Register } from './Register';
+export { default as Catalogue } from './Catalogue';
+export { default as Cart } from './Cart';
+export { default as Profile } from './Profile';
+export { default as Product } from './Product';
+export { default as Pago } from './Pago';
+export { default as Admin } from './Admin';
+export { default as Administradores } from './Gestion/Administradores';
+export { default as Clientes } from './Gestion/Clientes';
+export { default as Estanques } from './Gestion/Estanques';
+export { default as Alimentos } from './Gestion/Alimentos';
+export { default as Suplementos } from './Gestion/Suplementos';
+export { default as History } from './History';
