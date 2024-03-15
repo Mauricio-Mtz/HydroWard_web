@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { useTable, usePagination, useSortBy } from 'react-table';
-import GlobalContext from '../context/GlobalContext';
+import GlobalContext from '../config/GlobalContext';
 
 export default function Tabla({ data, columns }) {
     const { API_URL } = useContext(GlobalContext);

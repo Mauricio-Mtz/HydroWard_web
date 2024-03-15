@@ -3,7 +3,7 @@ import Navbar from '../components/Navbar';
 import { Link } from "react-router-dom";
 import { FaEye, FaShoppingCart } from 'react-icons/fa';
 import axios from 'axios';
-import GlobalContext from '../context/GlobalContext';
+import GlobalContext from '../config/GlobalContext';
 
 export default function Catalogue() {
     const { API_URL } = useContext(GlobalContext);

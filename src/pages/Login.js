@@ -2,7 +2,7 @@ import React, { useState, useContext } from 'react';
 import { useNavigate } from "react-router-dom";
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import axios from 'axios';
-import GlobalContext from '../context/GlobalContext';
+import GlobalContext from '../config/GlobalContext';
 
 export default function Login() {
     const { API_URL } = useContext(GlobalContext);

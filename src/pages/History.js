@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import Navbar from '../components/Navbar';
 import QRCode from 'qrcode.react';
 import axios from 'axios';
-import GlobalContext from '../context/GlobalContext';
+import GlobalContext from '../config/GlobalContext';
 
 export default function History() {
     const { API_URL } = useContext(GlobalContext);

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import Navbar from '../components/Navbar';
 import axios from "axios";
 import { useParams, Link } from "react-router-dom";
-import GlobalContext from '../context/GlobalContext';
+import GlobalContext from '../config/GlobalContext';
 
 export default function Product() {
   const { API_URL } = useContext(GlobalContext);

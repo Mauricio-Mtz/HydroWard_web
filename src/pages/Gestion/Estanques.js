@@ -3,7 +3,7 @@ import axios from "axios";
 import SlideBar from '../../components/Slidebar';
 import Navbar from '../../components/Navbar';
 import Tabla from './../../components/Tabla';
-import GlobalContext from '../../context/GlobalContext';
+import GlobalContext from '../../config/GlobalContext';
 import Modal from './../../components/Modal';
 
 export default function Estanques() {

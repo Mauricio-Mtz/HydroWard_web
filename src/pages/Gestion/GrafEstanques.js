@@ -3,8 +3,12 @@ import axios from "axios";
 import SlideBar from '../../components/Slidebar';
 import Navbar from '../../components/Navbar';
 import Tabla from './../../components/Tabla';
-import GlobalContext from '../../context/GlobalContext';
+import GlobalContext from '../../config/GlobalContext';
 import { useParams } from 'react-router-dom';
+import Highcharts from 'highcharts'
+import HighchartsReact from 'highcharts-react-official'
+import '../../config/firebaseConfig';
+import { getFirestore, getDocs, collection } from 'firebase/firestore';
 
 export default function GrafEstanques() {
     const { API_URL } = useContext(GlobalContext);
@@ -13,33 +17,56 @@ export default function GrafEstanques() {
     const [columnas, setColumnas] = useState([]);
     const { accion } = useParams();
 
+    const db = getFirestore();
+
+    const [options, setOptions] = useState({
+        title: {
+            text: 'Temperatura en función del tiempo'
+        },
+        xAxis: {
+            type: 'datetime',
+            title: {
+                text: 'Fecha'
+            }
+        },
+        yAxis: {
+            title: {
+                text: 'Temperatura (°C)'
+            }
+        },
+        series: [{
+            name: 'Temperatura',
+            data: []
+        }]
+    });
+
     useEffect(() => {
-        const obtenerReporte = async () => {
-            // try {
-            //     const response = await axios.get(`${API_URL}/Reportes/${accion}/2024-01-13/2024-04-12`);
-            //     if (response.data.success) {
-            //         setReporteData(response.data.reporte);
-            //         const columnNames = Object.keys(response.data.reporte[0]);
-            //         const columns = [
-            //             ...columnNames.map(name => ({
-            //                 Header: name.toUpperCase(),
-            //                 accessor: name,
-            //             }))
-            //         ];
-            //         setColumnas(columns);
-            //     } else {
-            //         console.error('Error al obtener el reporte:', response.data.message);
-            //     }
-            // } catch (error) {
-            //     console.error('Error al obtener el reporte:', error);
-            // }
+        const obtenerDatos = async () => {
+            const dataCollection = collection(db, 'sensores');
+            const dataSnapshot = await getDocs(dataCollection);
+            const dataList = dataSnapshot.docs.flatMap(doc => {
+                const data = doc.data();
+                return data.temperatura.map((temp, index) => {
+                    return {
+                        temperatura: temp,
+                        fecha: data.fecha[index].toDate().getTime()
+                    };
+                });
+            });
+            setReporteData(dataList);
+    
+            setOptions({
+                ...options,
+                series: [{
+                    ...options.series[0],
+                    data: dataList.map(item => [item.fecha, item.temperatura])
+                }]
+            });
         };
-
-        obtenerReporte();
-    }, [API_URL, accion]);
-
-    console.log(reporteData)
-    console.log(columnas)
+    
+        obtenerDatos();
+    }, [db]);
+    
 
     const toggleSidebar = () => {
         setIsSidebarToggled(!isSidebarToggled);
@@ -60,12 +87,14 @@ export default function GrafEstanques() {
                                 <h1>Estanques de los usuarios</h1>
                                 <div className="card mb-4">
                                     <div className="card-header">
-                                        <i className="fas fa-table me-1"></i>
-                                        Muestra informacion visual sobre los estanques del usuario seleccionado
+                                        <i className="fas fa-chart-area me-1"></i>
+                                        Muestra información visual sobre los estanques del usuario seleccionado
                                     </div>
                                     <div className="card-body">
-                                        {/* Aquí se renderiza la tabla con los datos del reporte */}
-                                        {/* <Tabla data={reporteData} columns={columnas} /> */}
+                                        <HighchartsReact
+                                            highcharts={Highcharts}
+                                            options={options}
+                                        />
                                     </div>
                                 </div>
                             </div>

@@ -1,7 +1,7 @@
 // Dentro del componente Modal
 import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
-import GlobalContext from '../context/GlobalContext';
+import GlobalContext from '../config/GlobalContext';
 
 const Modal = ({ object, isOpen, closeModal, fieldTypes, name, type, recarga, categoria }) => {
     const { API_URL } = useContext(GlobalContext);

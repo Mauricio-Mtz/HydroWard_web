@@ -3,7 +3,7 @@ import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 import Navbar from './../components/Navbar';
 import axios from 'axios';
 import { useNavigate, useParams } from "react-router-dom";
-import GlobalContext from '../context/GlobalContext';
+import GlobalContext from '../config/GlobalContext';
 
 export default function Pago() {
     const { API_URL } = useContext(GlobalContext);

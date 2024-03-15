@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { FaUser, FaEye, FaEyeSlash } from 'react-icons/fa';
 import Navbar from '../components/Navbar';
 import axios from 'axios';
-import GlobalContext from '../context/GlobalContext';
+import GlobalContext from '../config/GlobalContext';
 import Modal from '../components/Modal';
 
 export default function Profile() {
