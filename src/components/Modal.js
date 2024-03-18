@@ -35,10 +35,14 @@ const Modal = ({ object, isOpen, closeModal, fieldTypes, name, type, recarga, ca
     const handleSubmit = async (e) => {
         e.preventDefault();
         let url;
-        if (categoria === "suplementos" || categoria === "alimentos" || categoria === "estanques") {
-            url = type === "editar" ? `${API_URL}/Productos/actualizar_producto` : `${API_URL}/Productos/agregar_producto`;
-        } else if (categoria === "usuarios" || categoria === "cliente" || categoria === "administrador") {
-            url = type === "editar" || type === "editPerf" ? `${API_URL}/Usuarios/actualizar_usuario` : `${API_URL}/Usuarios/agregar_usuario`;
+        if (categoria === "peces") {
+            url = type === "editar" ? `${API_URL}/Peces/actualizar_pez` : `${API_URL}/Peces/agregar_pez`;
+        } else {
+            if (categoria === "suplementos" || categoria === "alimentos" || categoria === "estanques") {
+                url = type === "editar" ? `${API_URL}/Productos/actualizar_producto` : `${API_URL}/Productos/agregar_producto`;
+            } else if (categoria === "usuarios" || categoria === "cliente" || categoria === "administrador") {
+                url = type === "editar" || type === "editPerf" ? `${API_URL}/Usuarios/actualizar_usuario` : `${API_URL}/Usuarios/agregar_usuario`;
+            }
         }
 
         let data = new FormData();
@@ -53,6 +57,12 @@ const Modal = ({ object, isOpen, closeModal, fieldTypes, name, type, recarga, ca
         for (let key in formData) {
             data.append(key, formData[key]);
         }
+
+        // //impresion del formData
+        // for (let pair of data.entries()) {
+        //     console.log(pair[0]+ ', ' + pair[1]); 
+        // }
+        
         axios({
             method: 'post',
             url: url,
@@ -65,7 +75,7 @@ const Modal = ({ object, isOpen, closeModal, fieldTypes, name, type, recarga, ca
                     closeModal();
                     console.log(response.data.message)
                 } else {
-                    console.error('Error al agregar al usuario:', response.data.message);
+                    console.error('Error al agregar el registro o cambio:', response.data.message);
                 }
             })
             .catch(error => {

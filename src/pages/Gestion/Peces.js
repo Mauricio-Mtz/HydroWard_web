@@ -9,20 +9,23 @@ import Modal from './../../components/Modal';
 export default function Peces() {
     const { API_URL } = useContext(GlobalContext);
     const [isSidebarToggled, setIsSidebarToggled] = useState(false);
-    const [usuarios, setUsuarios] = useState([]);
+    const [peces, setPeces] = useState([]);
     const [columnas, setColumnas] = useState([]);
-    const [usuario, setUsuario] = useState(null);
+    const [pez, setPez] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [name, setName] = useState("");
     const [type, setType] = useState("");
 
     const fieldTypes = {
         "nombre": "text",
-        "apellido": "text",
-        "telefono": "number",
-        "correo": "email",
-        "contrasena": "text",
-        "tipo": "text",
+        "alimentacion": "text",
+        "tiempo_no_alim": "number",
+        "tiempo_si_alim": "number",
+        "temperatura_min": "number",
+        "temperatura_max": "number",
+        "ph_min": "number",
+        "ph_max": "number",
+        "status": "number"
     };
 
 
@@ -31,15 +34,14 @@ export default function Peces() {
         localStorage.setItem('sb|sidebar-toggle', !isSidebarToggled);
     };
 
-    const obtenerUsuarios = () => {
+    const obtenerPez = () => {
         axios
-            .get(`${API_URL}/Usuarios/obtener_usuarios`)
+            .get(`${API_URL}/Peces/obtener_peces`)
             .then(response => {
                 if (response.data.success) {
-                    const administradores = response.data.usuarios.filter(usuario => usuario.tipo === 'administrador');
-                    setUsuarios(administradores);
+                    setPeces(response.data.peces);
 
-                    const columnNames = Object.keys(administradores[0]);
+                    const columnNames = Object.keys(response.data.peces[0]);
 
                     const columns = [
                         ...columnNames.map(name => ({
@@ -72,7 +74,7 @@ export default function Peces() {
     };
 
     useEffect(() => {
-        obtenerUsuarios();
+        obtenerPez();
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
@@ -80,9 +82,9 @@ export default function Peces() {
         setName("Editar Administrador")
         setType("editar")
         const { status, ...rest } = usuario;
-        setUsuario(rest);
+        setPez(rest);
         setIsModalOpen(true);
-        obtenerUsuarios();
+        obtenerPez();
     };
 
     const handleEliminar = (id, action) => {
@@ -92,13 +94,13 @@ export default function Peces() {
 
         axios({
             method: 'post',
-            url: `${API_URL}/Usuarios/eliminar_usuario`,
+            url: `${API_URL}/Peces/eliminar_pez`,
             data: formData,
             headers: { 'Content-Type': 'multipart/form-data' }
         })
             .then(response => {
                 if (response.data.success) {
-                    obtenerUsuarios();
+                    obtenerPez();
                 } else {
                     console.error('Error al modificar status del usuario:', response.data.message);
                 }
@@ -116,7 +118,7 @@ export default function Peces() {
             return acc;
         }, {});
         const { tipo, ...rest } = usuarioVacio;
-        setUsuario(rest);
+        setPez(rest);
         setIsModalOpen(true);
     };
     
@@ -142,19 +144,19 @@ export default function Peces() {
                                         <div className='text-center'>
                                             <button className='btn btn-info w-100' onClick={handleAgregar}>Agregar</button>
                                         </div>
-                                        <Tabla data={usuarios} columns={columnas} />
+                                        <Tabla data={peces} columns={columnas} />
                                     </div>
                                 </div>
                             </div>
                             <Modal
-                                object={usuario}
+                                object={pez}
                                 isOpen={isModalOpen}
                                 closeModal={() => setIsModalOpen(false)}
                                 fieldTypes={fieldTypes}
                                 name={name}
                                 type={type}
-                                recarga={obtenerUsuarios}
-                                categoria={"administrador"}
+                                recarga={obtenerPez}
+                                categoria={"peces"}
                             />
                         </main>
                     </div>

@@ -25,7 +25,7 @@ export default function Login() {
         formData.append('password', contrasena);
 
         axios
-            .post(`${API_URL}/back/login`, formData)
+            .post(`${API_URL}/Login/login`, formData)
             .then(response => {
                 if (response.data.success) {
                     localStorage.setItem('userData', JSON.stringify(response.data.usuario));
@@ -37,6 +37,7 @@ export default function Login() {
             })
             .catch(error => {
                 console.error('Error al iniciar sesión:', error);
+                alert("Algo ha salido mal con el inicio de sesión")
             });
     };
 
@@ -48,20 +49,14 @@ export default function Login() {
                     <h3>Iniciar sesión</h3>
                     <form onSubmit={login} className='d-grid align-items-end' style={{ height: "100%" }} >
                         <div>
-                            <div className="inputBox">
+                            <div className="inputBox mb-2">
                                 <input onChange={(event) => { setCorreo(event.target.value); }} type="" className="form-control" id="email" value={correo} name='email' required />
                                 <span>Correo</span>
                             </div>
-                            <div className="inputBox input-group mb-3">
+                            <div className="inputBox input-group mb-2">
                                 <input onChange={(event) => { setContrasena(event.target.value); }} type={mostrarContrasena ? "text" : "password"} className="form-control" id="password" value={contrasena} name='pass' required />
                                 <span>Contraseña</span>
-                                <button
-                                    className="btn btn-light"
-                                    type="button"
-                                    onClick={toggleMostrarContrasena}
-                                >
-                                    {mostrarContrasena ? <FaEye /> : <FaEyeSlash />}
-                                </button>
+                                <button className="btn btn-light"type="button"onClick={toggleMostrarContrasena}>{mostrarContrasena ? <FaEye /> : <FaEyeSlash />}</button>
                             </div>
                             <a href='/Register' className="text-info text-center mt-1">¿No tienes cuenta? Crea una</a>
                         </div>

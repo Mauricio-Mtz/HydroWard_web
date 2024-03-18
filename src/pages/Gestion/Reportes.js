@@ -11,12 +11,14 @@ export default function Reportes() {
     const [isSidebarToggled, setIsSidebarToggled] = useState(false);
     const [reporteData, setReporteData] = useState([]);
     const [columnas, setColumnas] = useState([]);
+    const [fechaInicio, setFechaInicio] = useState(''); // Estado de la fecha de inicio
+    const [fechaFin, setFechaFin] = useState(''); // Estado de la fecha de fin
     const { accion } = useParams();
 
     useEffect(() => {
         const obtenerReporte = async () => {
             try {
-                const response = await axios.get(`${API_URL}/Reportes/${accion}/2024-01-13/2024-04-12`);
+                const response = await axios.get(`${API_URL}/Reportes/${accion}/${fechaInicio}/${fechaFin}`);
                 if (response.data.success) {
                     setReporteData(response.data.reporte);
                     const columnNames = Object.keys(response.data.reporte[0]);
@@ -35,11 +37,10 @@ export default function Reportes() {
             }
         };
 
-        obtenerReporte();
-    }, [API_URL, accion]);
-
-    console.log(reporteData)
-    console.log(columnas)
+        if (fechaInicio !== '' && fechaFin !== '') {
+            obtenerReporte();
+        }
+    }, [API_URL, accion, fechaInicio, fechaFin]);
 
     const toggleSidebar = () => {
         setIsSidebarToggled(!isSidebarToggled);
@@ -64,7 +65,16 @@ export default function Reportes() {
                                         {accion === "productos" ? "Productos más vendidos" : accion === "clientes" ? "Clientes que más han comprado" : accion === "ventas" ? "Días con más ventas" : ""}
                                     </div>
                                     <div className="card-body">
-                                        {/* Aquí se renderiza la tabla con los datos del reporte */}
+                                        <div className='d-flex justify-content-center flex-wrap'>
+                                            <div className='p-2'>
+                                                <label className="form-label">Fecha de inicio:</label>
+                                                <input type="date" className="form-control" value={fechaInicio} onChange={(e) => setFechaInicio(e.target.value)} />
+                                            </div>
+                                            <div className='p-2'>
+                                                <label className="form-label">Fecha de fin:</label>
+                                                <input type="date" className="form-control" value={fechaFin} onChange={(e) => setFechaFin(e.target.value)} />
+                                            </div>
+                                        </div>
                                         <Tabla data={reporteData} columns={columnas} />
                                     </div>
                                 </div>
