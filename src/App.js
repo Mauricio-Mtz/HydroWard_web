@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import GlobalContext from './config/GlobalContext';
-import { Catalogue, Login, Register, Profile, History, Product, Cart, Pago, Admin, Administradores, Clientes, Estanques, Alimentos, Suplementos, Reportes, GrafEstanques, Peces } from './pages/';
+import { Catalogue, Login, Register, Profile, History, Product, Cart, Pago, Admin, Administradores, Clientes, Estanques, Alimentos, Suplementos, Reportes, GrafEstanques, Peces, EstanqueUsuario } from './pages/';
 const API_URL = 'http://localhost/hydroward_back';
 
 function App() {
@@ -25,6 +25,7 @@ function App() {
           <Route path="/Alimentos" element={<Alimentos />} />
           <Route path="/Suplementos" element={<Suplementos />} />
           <Route path="/Reportes/:accion" element={<Reportes />} />
+          <Route path="/EstanqueUsuario" element={<EstanqueUsuario />} />
           <Route path="/GrafEstanques" element={<GrafEstanques />} />
           <Route path="/Peces" element={<Peces />} />
           <Route path="*" element={<h1 className='text-center'>Not Found</h1>} />

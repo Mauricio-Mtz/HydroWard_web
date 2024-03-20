@@ -1,34 +1,31 @@
 import React, { useState, useEffect, useContext } from 'react';
-import SlideBar from '../../components/Slidebar';
-import Navbar from '../../components/Navbar';
-import GlobalContext from '../../config/GlobalContext';
-import { useParams } from 'react-router-dom';
+import { ModalTitle } from 'react-bootstrap';
+import Modal from 'react-bootstrap/Modal';
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
 import HighchartsExporting from "highcharts/modules/exporting";
 import HighchartsExportData from "highcharts/modules/export-data";
-import { getFirestore, collection, query, where, getDocs, onSnapshot } from 'firebase/firestore';
-import EnvioFirebase from '../../components/EnvioFirebase';
-import '../../config/firebaseConfig';
+import { getFirestore, collection, query, where, onSnapshot } from 'firebase/firestore';
+import EnvioFirebase from './EnvioFirebase';
+import '../config/firebaseConfig';
 
 // Agregar módulos de exportación a Highcharts
 HighchartsExporting(Highcharts);
 HighchartsExportData(Highcharts);
 
-export default function GrafEstanques() {
-    const { API_URL } = useContext(GlobalContext);
+export default function GrafEstanques(props) {
     const [isSidebarToggled, setIsSidebarToggled] = useState(false);
     const [temperaturaData, setTemperaturaData] = useState([]);
     const [phData, setPhData] = useState([]);
     const [conteoPecesData, setConteoPecesData] = useState([]);
-    const { accion } = useParams();
+    const [selectedEstanque, setSelectedEstanque] = useState(null);
 
     useEffect(() => {
         const fetchData = async () => {
             try {
                 const db = getFirestore();
                 const dataCollection = collection(db, 'sensores');
-                const q = query(dataCollection, where("id_estanque", "==", 2));
+                const q = query(dataCollection, where("id_estanque", "==", Number(selectedEstanque.id)));
 
                 // Escucha los cambios en tiempo real
                 const unsubscribe = onSnapshot(q, (querySnapshot) => {
@@ -69,13 +66,11 @@ export default function GrafEstanques() {
                 console.error('Error fetching data:', error);
             }
         };
-        fetchData();
-    }, []);
 
-    const toggleSidebar = () => {
-        setIsSidebarToggled(!isSidebarToggled);
-        localStorage.setItem('sb|sidebar-toggle', !isSidebarToggled);
-    };
+        if (selectedEstanque) {
+            fetchData();
+        }
+    }, [selectedEstanque]);
 
     const getGraficaOptions = (title, data) => {
         return {
@@ -122,53 +117,59 @@ export default function GrafEstanques() {
             }]
         };
     };
-
     return (
         <>
-            <Navbar />
-            <div className={`sb-nav-fixed ${isSidebarToggled ? 'sb-sidenav-toggled' : ''}`}>
-                <div id="layoutSidenav">
-                    <div id="layoutSidenav_nav">
-                        <SlideBar onToggleSidebar={toggleSidebar} isSidebarToggled={isSidebarToggled} />
-                    </div>
-                    <div id="layoutSidenav_content">
-                        <main className='p-3'>
-                            <div className="container-fluid px-4">
-                                <h1>Estanques de los usuarios</h1>
-                                <div className="card mb-4">
-                                    <div className="card-header">
-                                        <i className="fas fa-chart-area me-1"></i>
-                                        Muestra información visual sobre los estanques del usuario seleccionado
-                                    </div>
-                                    <div className="card-body">
-                                        <div className="mt-2">
-                                            <HighchartsReact
-                                                highcharts={Highcharts}
-                                                options={getGraficaOptions("Grafica en funcion de la temperatura", temperaturaData)}
-                                            />
-                                        </div>
-                                        <div className="mt-2">
-                                            <HighchartsReact
-                                                className="mt-2"
-                                                highcharts={Highcharts}
-                                                options={getGraficaOptions("Grafica en funcion del ph", phData)}
-                                            />
-                                        </div>
-                                        <div className="mt-2">
-                                            <HighchartsReact
-                                                className="mt-2"
-                                                highcharts={Highcharts}
-                                                options={getGraficaOptions("Grafica en funcion de la cantidad de peces", conteoPecesData)}
-                                            />
-                                        </div>
-                                        <EnvioFirebase />
-                                    </div>
+            <Modal show={props.show} onHide={props.onHideGrafica} size='xl'>
+                <Modal.Header className='bg-info bg-opacity-50' closeButton>
+                    <ModalTitle>Estanques de los usuarios</ModalTitle>
+                    <p>
+                        Muestra información visual sobre los estanques del usuario seleccionado
+                    </p>
+                </Modal.Header>
+                <Modal.Body>
+                    <div className="card-body">
+                        <div className="d-flex justify-content-around">
+                            {props.idEstanques.map(estanque => (
+                                <button key={estanque.id} className="btn btn-primary w-100 m-1" onClick={() => setSelectedEstanque(estanque)}>
+                                    {estanque.id}.- {estanque.nombre}
+                                </button>
+                            ))}
+                        </div>
+                        {selectedEstanque && (
+                            <>
+                                <div className="mt-2">
+                                    <HighchartsReact
+                                        highcharts={Highcharts}
+                                        options={getGraficaOptions("Grafica en funcion de la temperatura", temperaturaData)}
+                                    />
                                 </div>
-                            </div>
-                        </main>
+                                <div className="mt-2">
+                                    <HighchartsReact
+                                        className="mt-2"
+                                        highcharts={Highcharts}
+                                        options={getGraficaOptions("Grafica en funcion del ph", phData)}
+                                    />
+                                </div>
+                                <div className="mt-2">
+                                    <HighchartsReact
+                                        className="mt-2"
+                                        highcharts={Highcharts}
+                                        options={getGraficaOptions("Grafica en funcion de la cantidad de peces", conteoPecesData)}
+                                    />
+                                </div>
+                            </>
+                        )}
+                        <EnvioFirebase />
                     </div>
-                </div>
-            </div>
+                </Modal.Body>
+                <Modal.Footer>
+                    <button className='btn btn-primary' onClick={props.onHideGrafica}>
+                        Continuar
+                    </
+                    button>
+                </Modal.Footer>
+            </Modal>
+
         </>
     );
 }

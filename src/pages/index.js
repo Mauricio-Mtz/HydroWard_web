@@ -13,5 +13,6 @@ export { default as Estanques } from './Gestion/Estanques';
 export { default as Alimentos } from './Gestion/Alimentos';
 export { default as Suplementos } from './Gestion/Suplementos';
 export { default as Reportes } from './Gestion/Reportes';
-export { default as GrafEstanques } from './Gestion/GrafEstanques';
+export { default as GrafEstanques } from '../components/GrafEstanques';
 export { default as Peces } from './Gestion/Peces';
+export { default as EstanqueUsuario } from './Gestion/EstanqueUsuario';

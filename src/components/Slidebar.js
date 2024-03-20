@@ -49,7 +49,7 @@ export default function Slidebar({ onToggleSidebar, isSidebarToggled }) {
                         </a>
                         <div className="collapse" id="collapseSeguimiento" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
                             <nav className="sb-sidenav-menu-nested nav">
-                                <Link className="nav-link" to={"/GrafEstanques"}>Estanques</Link>
+                                <Link className="nav-link" to={"/EstanqueUsuario"}>Estanques</Link>
                             </nav>
                         </div>
 
