@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ModalTitle } from 'react-bootstrap';
 import Modal from 'react-bootstrap/Modal';
 import Highcharts from 'highcharts';
@@ -9,12 +9,10 @@ import { getFirestore, collection, query, where, onSnapshot } from 'firebase/fir
 import EnvioFirebase from './EnvioFirebase';
 import '../config/firebaseConfig';
 
-// Agregar módulos de exportación a Highcharts
 HighchartsExporting(Highcharts);
 HighchartsExportData(Highcharts);
 
 export default function GrafEstanques(props) {
-    const [isSidebarToggled, setIsSidebarToggled] = useState(false);
     const [temperaturaData, setTemperaturaData] = useState([]);
     const [phData, setPhData] = useState([]);
     const [conteoPecesData, setConteoPecesData] = useState([]);
