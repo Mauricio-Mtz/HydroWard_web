@@ -60,6 +60,7 @@ export default function EstanqueUsuario() {
                             Cell: row => (
                                 <div className='d-flex justify-content-between'>
                                     <button className='btn btn-info w-100' onClick={() => handleGrafica(row.row.original)}>Graficas</button>
+                                    <button className='btn btn-warning w-100 ms-1' onClick={() => handleMapa(row.row.original)}>Graficas</button>
                                 </div>
                             ),
                         },
@@ -84,6 +85,17 @@ export default function EstanqueUsuario() {
         const estanques = estanque.estanques.map(estanque => ({
             id: estanque.id,
             nombre: estanque.nombre
+        }));
+        setEstanques(estanques)
+        setShowGrafica(true)
+    };
+    const handleMapa = (estanque) => {
+        // Obtener los IDs y nombres de los estanques del usuario actual
+        const estanques = estanque.estanques.map(estanque => ({
+            id: estanque.id,
+            nombre: estanque.nombre,
+            latitud: estanque.latitud,
+            longitud: estanque.longitud
         }));
         setEstanques(estanques)
         setShowGrafica(true)
