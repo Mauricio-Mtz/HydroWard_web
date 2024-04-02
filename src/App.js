@@ -9,7 +9,7 @@ function App() {
     <Router>
       <GlobalContext.Provider value={{ API_URL }}>
         <Routes>
-          <Route path="/" element={<Catalogue />} />
+          <Route path="/:search?" element={<Catalogue />} />
           <Route path="/Login" element={<Login />} />
           <Route path="/Register" element={<Register />} />
           <Route path="/Profile" element={<Profile />} />

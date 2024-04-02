@@ -84,7 +84,7 @@ export default function Login() {
                     <h3>Iniciar sesión</h3>
                     <form onSubmit={login} className='d-grid align-items-end' style={{ height: "100%" }} >
                         <div>
-                            <div className="ifffnputBox mb-2">
+                            <div className="inputBox mb-2">
                                 <input onChange={(event) => { setCorreo(event.target.value); }} type="" className="form-control" id="email" value={correo} name='email' required />
                                 <span>Correo</span>
                             </div>

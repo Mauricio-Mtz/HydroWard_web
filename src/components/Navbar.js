@@ -7,6 +7,7 @@ export default function Navbar() {
     const navigate = useNavigate();
     const [isOpen, setIsOpen] = useState(false);
     const [isLargeScreen, setIsLargeScreen] = useState(window.innerWidth > 1000);
+    const [searchTerm, setSearchTerm] = useState('');
 
     useEffect(() => {
         const handleResize = () => {
@@ -26,6 +27,11 @@ export default function Navbar() {
         navigate("/");
     }
 
+    const handleSearch = (e) => {
+        e.preventDefault();
+        navigate(`/search=${searchTerm}`);
+    };
+
     return (
         <nav className="navbar navbar-expand-lg navbar-light bg-primary rounded-bottom fixed-top" style={{ zIndex: 1039 }}>
             <div className="container-fluid d-flex justify-content-between">
@@ -38,9 +44,16 @@ export default function Navbar() {
                 {(isOpen || isLargeScreen) && (
                     <>
                         <div className="d-flex justify-content-center flex-grow-1">
-                            <form className="d-flex w-100">
+                            <form className="d-flex w-100" onSubmit={handleSearch}>
                                 <div className="input-group" style={{ width: "100%" }} >
-                                    <input className="form-control" type="search" placeholder="Search" aria-label="Search" />
+                                    <input
+                                        className="form-control"
+                                        type="search"
+                                        placeholder="Search"
+                                        aria-label="Search"
+                                        value={searchTerm}
+                                        onChange={(e) => setSearchTerm(e.target.value)}
+                                    />
                                     <button className="btn btn-light" type="submit">
                                         <FaSearch />
                                     </button>

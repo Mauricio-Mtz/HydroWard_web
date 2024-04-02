@@ -1,31 +1,40 @@
 import React, { useState, useEffect, useContext } from 'react';
 import Navbar from '../components/Navbar';
-import { Link } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { FaEye, FaShoppingCart } from 'react-icons/fa';
 import axios from 'axios';
 import GlobalContext from '../config/GlobalContext';
 
-export default function Catalogue() {
+export default function Catalogue(props) {
     const { API_URL } = useContext(GlobalContext);
+    const { search } = useParams();
     const sesion = JSON.parse(localStorage.getItem('userData'));
     const [selectedCategory, setSelectedCategory] = useState('Estanques');
     const [products, setProducts] = useState([]);
 
     useEffect(() => {
-        obtenerProductos();
+        obtenerProductos(search);
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    }, [search]);
+
 
     const handleCategoryChange = (category) => {
         setSelectedCategory(category);
     };
 
-    const obtenerProductos = () => {
+    const obtenerProductos = (searchParam = '') => {
+        let value = searchParam.substring(7);
         axios
             .get(`${API_URL}/catalogo/productos`)
             .then(response => {
                 if (response.data.success) {
-                    setProducts(response.data.productos);
+                    let filteredProducts = response.data.productos;
+                    if (value !== "") {
+                        filteredProducts = filteredProducts.filter(product =>
+                            product.nombre.toLowerCase().includes(value.toLowerCase())
+                        );
+                    }
+                    setProducts(filteredProducts);
                 } else {
                     console.error(response.data.message);
                 }
@@ -54,6 +63,8 @@ export default function Catalogue() {
             });
     }
 
+    // Filtrar productos según la búsqueda o categoría seleccionada
+    const filteredProducts = search ? products : products.filter(product => selectedCategory.toLowerCase() === 'todos' || product.tipo.toLowerCase() === selectedCategory.toLowerCase());
 
     return (
         <>
@@ -61,59 +72,57 @@ export default function Catalogue() {
             <div className="container mb-4" style={{ marginTop: "90px" }}>
                 <div className="row d-flex justify-content-center">
                     <div className="col m-1">
-                        <button type="button" alt="Boton categoria estanques" className={`btn btn-primary w-100 ${selectedCategory === 'estanques' ? 'active' : ''}`} onClick={() => handleCategoryChange('Estanques')}>Estanques</button>
+                        <button type="button" alt="Boton categoria estanques" className={`btn btn-primary w-100 ${selectedCategory === 'Estanques' ? 'active' : ''}`} onClick={() => handleCategoryChange('Estanques')}>Estanques</button>
                     </div>
                     <div className="col m-1">
-                        <button type="button" alt="Boton categoria alimentos" className={`btn btn-primary w-100 ${selectedCategory === 'alimentos' ? 'active' : ''}`} onClick={() => handleCategoryChange('Alimentos')}>Alimentos</button>
+                        <button type="button" alt="Boton categoria alimentos" className={`btn btn-primary w-100 ${selectedCategory === 'Alimentos' ? 'active' : ''}`} onClick={() => handleCategoryChange('Alimentos')}>Alimentos</button>
                     </div>
                     <div className="col m-1">
-                        <button type="button" alt="Boton categoria suplementos" className={`btn btn-primary w-100 ${selectedCategory === 'suplementos' ? 'active' : ''}`} onClick={() => handleCategoryChange('Suplementos')}>Suplementos</button>
+                        <button type="button" alt="Boton categoria suplementos" className={`btn btn-primary w-100 ${selectedCategory === 'Suplementos' ? 'active' : ''}`} onClick={() => handleCategoryChange('Suplementos')}>Suplementos</button>
                     </div>
                 </div>
             </div>
 
             <div className="container">
                 <div className="row">
-                    {products
-                        .filter(product => selectedCategory.toLowerCase() === 'todos' || product.tipo.toLowerCase() === selectedCategory.toLowerCase())
-                        .map(product => (
-                            <div key={product.id} className={product.tipo === 'estanques' ? "col-sm-6 col-12 mb-4" : "col-lg-3 col-md-4 col-sm-6 col-12 mb-4"}>
-                                <div className="card h-100 border-3 border-primary" alt={"Carta de producto " + product.nombre}>
-                                    {product.imagenes.length > 0 ? (
-                                        <img
-                                            className="card-img-top"
-                                            src={`${API_URL}/static/images/${product.imagenes[0].nombre}`}
-                                            alt={product.imagenes[0].nombre}
-                                            style={product.tipo === 'estanques' ? { maxHeight: "380px" } : { maxHeight: "184.5px" }}
-                                        />
-                                    ) : (
-                                        <img
-                                            className="card-img-top"
-                                            src={process.env.PUBLIC_URL + "/images/notFound.png"}
-                                            alt="Not Found"
-                                            style={{ maxHeight: "306.5px" }}
-                                        />
-                                    )}
-                                    <div className="card-body d-grid">
-                                        <h5 className="card-title h-50">{product.nombre}</h5>
-                                        <p className="card-text h-25">Precio: ${product.precio}</p>
-                                        <div className="d-flex">
-                                            {product.tipo !== "estanques" && (
-                                                <button
-                                                    className="btn btn-success m-1 w-100"
-                                                    onClick={() => sesion ? agregarCarrito(product.id, sesion.id) : null}
-                                                    disabled={!sesion || (sesion && sesion.tipo !== "cliente")} 
-                                                    alt="Boton para agregar al carrito"
-                                                >
-                                                    <FaShoppingCart />
-                                                </button>
-                                            )}
-                                            <Link className="btn btn-info m-1 w-100" to={`/product/${product.id}`} alt="Boton para ver mas sobre el producto"><FaEye /></Link>
-                                        </div>
+                    {filteredProducts.map(product => (
+                        <div key={product.id} className={product.tipo === 'estanques' ? "col-sm-6 col-12 mb-4" : "col-lg-3 col-md-4 col-sm-6 col-12 mb-4"}>
+                            <div className="card h-100 border-3 border-primary" alt={"Carta de producto " + product.nombre}>
+                                {product.imagenes.length > 0 ? (
+                                    <img
+                                        className="card-img-top"
+                                        src={`${API_URL}/static/images/${product.imagenes[0].nombre}`}
+                                        alt={product.imagenes[0].nombre}
+                                        style={product.tipo === 'estanques' ? { maxHeight: "380px" } : { maxHeight: "184.5px" }}
+                                    />
+                                ) : (
+                                    <img
+                                        className="card-img-top"
+                                        src={process.env.PUBLIC_URL + "/images/notFound.png"}
+                                        alt="Not Found"
+                                        style={{ maxHeight: "306.5px" }}
+                                    />
+                                )}
+                                <div className="card-body d-grid">
+                                    <h5 className="card-title h-50">{product.nombre}</h5>
+                                    <p className="card-text h-25">Precio: ${product.precio}</p>
+                                    <div className="d-flex">
+                                        {product.tipo !== "estanques" && (
+                                            <button
+                                                className="btn btn-success m-1 w-100"
+                                                onClick={() => sesion ? agregarCarrito(product.id, sesion.id) : null}
+                                                disabled={!sesion || (sesion && sesion.tipo !== "cliente")}
+                                                alt="Boton para agregar al carrito"
+                                            >
+                                                <FaShoppingCart />
+                                            </button>
+                                        )}
+                                        <Link className="btn btn-info m-1 w-100" to={`/product/${product.id}`} alt="Boton para ver mas sobre el producto"><FaEye /></Link>
                                     </div>
                                 </div>
                             </div>
-                        ))}
+                        </div>
+                    ))}
                 </div>
             </div>
         </>
