@@ -7,6 +7,7 @@ import GlobalContext from '../config/GlobalContext';
 export default function Product() {
   const { API_URL } = useContext(GlobalContext);
   const { id } = useParams();
+  const sesion = JSON.parse(localStorage.getItem('userData'));
   const [cantidad, setCantidad] = useState(1);
   const [prod, setProd] = useState(null);
   const [index, setIndex] = useState(0);
@@ -61,6 +62,25 @@ export default function Product() {
     }
   }
 
+  const agregarCarrito = (cantidad, idProd, idUser) => {
+    let formData = new FormData();
+    formData.append('idProducto', idProd);
+    formData.append('idUsuario', idUser);
+    formData.append('cantidad', cantidad);
+    axios({
+      method: 'post',
+      url: `${API_URL}/catalogo/agregar`,
+      data: formData,
+      headers: { 'Content-Type': 'multipart/form-data' }
+    })
+      .then(response => {
+        alert("producto agregado")
+      })
+      .catch(error => {
+        console.error('Error al agregar producto al carrito:', error);
+      });
+  }
+
   return (
     <>
       <Navbar />
@@ -109,11 +129,24 @@ export default function Product() {
                   </div>
                   <div className='card-footer text-end border-top-0 bg-transparent'>
                     <div className="d-grid mt-1">
-                      <div className='d-flex mb-2 justify-content-between'>
-                        <input className="rounded border-0 me-2 w-25" type="number" min="1" max={prod.stock} value={cantidad} onChange={handleChangeCantidad} />
-                        <button className='btn btn-secondary w-75' onClick={handleComprar}>Agregar al carrito</button>
-                      </div>
-                      <Link className="btn btn-secondary" to={`/Pago/producto/${productoString}/${cantidad}`}>Comprar</Link>
+                      {prod.tipo !== "estanques" && (
+                        <div className='d-flex mb-2 justify-content-between'>
+                          <input className="rounded border-0 me-2 w-25" type="number" min="1" max={prod.stock} value={cantidad} onChange={handleChangeCantidad} />
+                          <button className='btn btn-secondary w-75' disabled={!sesion || (sesion && sesion.tipo !== "cliente")} onClick={() => agregarCarrito(cantidad, prod.id, sesion.id)}>Agregar al carrito</button>
+                        </div>
+                      )}
+                      <Link
+                        className="btn btn-secondary"
+                        to={sesion && sesion.tipo === "cliente" ? `/Pago/producto/${productoString}/${cantidad}` : '#'}
+                        onClick={event => {
+                          if (!sesion || (sesion && sesion.tipo !== "cliente")) {
+                            event.preventDefault();
+                            alert("No tienes la sesión adecuada para realizar compras.");
+                          }
+                        }}
+                      >
+                        Comprar
+                      </Link>
                     </div>
                   </div>
                 </div>

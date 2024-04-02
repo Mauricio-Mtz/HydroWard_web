@@ -118,17 +118,14 @@ export default function GrafEstanques(props) {
     return (
         <>
             <Modal show={props.show} onHide={props.onHideGrafica} size='xl'>
-                <Modal.Header className='bg-info bg-opacity-50' closeButton>
+                <Modal.Header className='bg-info bg-opacity-75' closeButton>
                     <ModalTitle>Estanques de los usuarios</ModalTitle>
-                    <p>
-                        Muestra información visual sobre los estanques del usuario seleccionado
-                    </p>
                 </Modal.Header>
                 <Modal.Body>
                     <div className="card-body">
                         <div className="d-flex justify-content-around">
                             {props.idEstanques.map(estanque => (
-                                <button key={estanque.id} className="btn btn-primary w-100 m-1" onClick={() => setSelectedEstanque(estanque)}>
+                                <button key={estanque.id} className="btn btn-info w-100 m-1" onClick={() => setSelectedEstanque(estanque)}>
                                     {estanque.id}.- {estanque.nombre}
                                 </button>
                             ))}
@@ -161,7 +158,7 @@ export default function GrafEstanques(props) {
                     </div>
                 </Modal.Body>
                 <Modal.Footer>
-                    <button className='btn btn-primary' onClick={props.onHideGrafica}>
+                    <button className='btn btn-info' onClick={props.onHideGrafica}>
                         Continuar
                     </
                     button>

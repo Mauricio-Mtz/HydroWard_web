@@ -65,12 +65,15 @@ export default function Pago() {
         if (tipoCompra === "carrito") {
             let totalProductos = 0;
             let subtotal = 0;
+
             object.forEach(item => {
                 totalProductos += item.cantidad;
                 subtotal += item.cantidad * item.precio;
             });
+
             const iva = subtotal * 0.16;
-            const total = subtotal + iva;
+            const total = subtotal;
+            subtotal = subtotal - iva;
             setTotales({ totalProductos, subtotal, iva, total });
         } else if (tipoCompra === "producto") {
             const subtotal = cantidad * object.precio;

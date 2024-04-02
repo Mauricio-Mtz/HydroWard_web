@@ -48,7 +48,7 @@ export default function Cart() {
         let totalPrecio = 0;
 
         carritoData.forEach((item) => {
-            totalProductos += item.cantidad;
+            totalProductos += parseInt(item.cantidad);
             totalPrecio += item.precio * item.cantidad;
         });
 
@@ -64,17 +64,84 @@ export default function Cart() {
         });
     };
 
-
-    const handleActualizarCantidad = async (idProducto, nuevaCantidad) => {
-        // Lógica para actualizar la cantidad en el backend
+    const handleActualizarCantidad = async (idProducto, nuevaCantidad, stock) => {
+        if (parseInt(nuevaCantidad) <= parseInt(stock)) {
+            const data = new FormData();
+            data.append('idProd', idProducto);
+            data.append('cant', nuevaCantidad);
+    
+            axios({
+                method: 'post',
+                url: `${API_URL}/Carrito/actualizar_cantidad`,
+                data: data,
+                headers: { 'Content-Type': 'multipart/form-data' }
+            })
+                .then(response => {
+                    if (response.data.success) {
+                        fetchCarrito()
+                        console.log(response.data.message)
+                    } else {
+                        console.error(response.data.message);
+                        alert(response.data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Informacion no enviada:', error);
+                    alert("Error del servidor");
+                });
+        } else {
+            alert("Se excede el stock del producto")
+        }
     };
 
-    const handleEliminarProducto = async (idProducto, idUsuario) => {
-        // Lógica para eliminar el producto del carrito en el backend
+    const handleEliminarProducto = async (idProducto) => {
+        const data = new FormData();
+        data.append('idProd', idProducto);
+
+        axios({
+            method: 'post',
+            url: `${API_URL}/Carrito/eliminar_producto`,
+            data: data,
+            headers: { 'Content-Type': 'multipart/form-data' }
+        })
+            .then(response => {
+                if (response.data.success) {
+                    fetchCarrito()
+                    console.log(response.data.message)
+                } else {
+                    console.error(response.data.message);
+                    alert(response.data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Informacion no enviada:', error);
+                alert("Error del servidor");
+            });
     };
 
     const handleEliminarCarrito = async (idUsuario) => {
-        // Lógica para eliminar todo el carrito en el backend
+        const data = new FormData();
+        data.append('idUser', idUsuario);
+
+        axios({
+            method: 'post',
+            url: `${API_URL}/Carrito/eliminar_carrito`,
+            data: data,
+            headers: { 'Content-Type': 'multipart/form-data' }
+        })
+            .then(response => {
+                if (response.data.success) {
+                    fetchCarrito()
+                    console.log(response.data.message)
+                } else {
+                    console.error(response.data.message);
+                    alert(response.data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Informacion no enviada:', error);
+                alert("Error del servidor");
+            });
     };
 
     return (
@@ -104,12 +171,12 @@ export default function Cart() {
                                                 </div>
                                                 <div className="card-footer text-end border-top-0 bg-transparent">
                                                     <div className="d-flex align-items-center mb-1 bg-secondary rounded input-group">
-                                                        <input type="number" min="1" className="form-control" value={val.cantidad} onChange={(event) => handleActualizarCantidad(val.ca_clave, event.target.value)} />
+                                                        <input type="number" min="1" className="form-control" value={val.cantidad} onChange={(event) => handleActualizarCantidad(val.id, event.target.value, val.stock)} />
                                                         <div className="input-group-append">
                                                             <span className="input-group-text">Unidades</span>
                                                         </div>
                                                     </div>
-                                                    <button className="btn btn-danger w-100" style={{ padding: '10px', width: '80%' }} onClick={() => handleEliminarProducto(val.ca_clave)}>Eliminar</button>
+                                                    <button className="btn btn-danger w-100" style={{ padding: '10px', width: '80%' }} onClick={() => handleEliminarProducto(val.id)}>Eliminar</button>
                                                 </div>
                                             </div>
                                         </div>

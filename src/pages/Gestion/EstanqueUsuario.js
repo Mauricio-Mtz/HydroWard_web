@@ -5,6 +5,7 @@ import Navbar from '../../components/Navbar';
 import Tabla from './../../components/Tabla';
 import GlobalContext from '../../config/GlobalContext';
 import GrafEstanques from './../../components/GrafEstanques';
+import MapEstanques from '../../components/MapEstanques';
 
 export default function EstanqueUsuario() {
     const { API_URL } = useContext(GlobalContext);
@@ -12,6 +13,7 @@ export default function EstanqueUsuario() {
     const [usuarios, setUsuarios] = useState([]);
     const [columnas, setColumnas] = useState([]);
     const [showGrafica, setShowGrafica] = useState(false);
+    const [showMapas, setShowMapas] = useState(false);
     const [estanques, setEstanques] = useState([]);
 
     const toggleSidebar = () => {
@@ -60,7 +62,7 @@ export default function EstanqueUsuario() {
                             Cell: row => (
                                 <div className='d-flex justify-content-between'>
                                     <button className='btn btn-info w-100' onClick={() => handleGrafica(row.row.original)}>Graficas</button>
-                                    <button className='btn btn-warning w-100 ms-1' onClick={() => handleMapa(row.row.original)}>Graficas</button>
+                                    <button className='btn btn-warning w-100 ms-1' onClick={() => handleMapa(row.row.original)}>Mapas</button>
                                 </div>
                             ),
                         },
@@ -98,10 +100,8 @@ export default function EstanqueUsuario() {
             longitud: estanque.longitud
         }));
         setEstanques(estanques)
-        setShowGrafica(true)
+        setShowMapas(true)
     };
-
-
 
     return (
         <>
@@ -126,6 +126,11 @@ export default function EstanqueUsuario() {
                                         <GrafEstanques
                                             onHideGrafica={() => setShowGrafica(false)}
                                             show={showGrafica}
+                                            idEstanques={estanques}
+                                        />
+                                        <MapEstanques
+                                            onHideGrafica={() => setShowMapas(false)}
+                                            show={showMapas}
                                             idEstanques={estanques}
                                         />
                                     </div>

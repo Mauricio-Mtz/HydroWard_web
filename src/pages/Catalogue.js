@@ -13,7 +13,7 @@ export default function Catalogue() {
 
     useEffect(() => {
         obtenerProductos();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const handleCategoryChange = (category) => {
@@ -99,7 +99,14 @@ export default function Catalogue() {
                                         <p className="card-text h-25">Precio: ${product.precio}</p>
                                         <div className="d-flex">
                                             {product.tipo !== "estanques" && (
-                                                <button className="btn btn-success m-1 w-100" onClick={() => agregarCarrito(product.id, sesion.id)} alt="Boton para agregar al carrito"><FaShoppingCart /></button>
+                                                <button
+                                                    className="btn btn-success m-1 w-100"
+                                                    onClick={() => sesion ? agregarCarrito(product.id, sesion.id) : null}
+                                                    disabled={!sesion || (sesion && sesion.tipo !== "cliente")} 
+                                                    alt="Boton para agregar al carrito"
+                                                >
+                                                    <FaShoppingCart />
+                                                </button>
                                             )}
                                             <Link className="btn btn-info m-1 w-100" to={`/product/${product.id}`} alt="Boton para ver mas sobre el producto"><FaEye /></Link>
                                         </div>
