@@ -115,6 +115,7 @@ export default function GrafEstanques(props) {
             }]
         };
     };
+    
     return (
         <>
             <Modal show={props.show} onHide={props.onHideGrafica} size='xl'>

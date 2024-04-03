@@ -41,28 +41,34 @@ const Modal = ({ object, isOpen, closeModal, fieldTypes, name, type, recarga, ca
             if (categoria === "suplementos" || categoria === "alimentos" || categoria === "estanques") {
                 url = type === "editar" ? `${API_URL}/Productos/actualizar_producto` : `${API_URL}/Productos/agregar_producto`;
             } else if (categoria === "usuarios" || categoria === "cliente" || categoria === "administrador") {
-                url = type === "editar" || type === "editPerf" ? `${API_URL}/Usuarios/actualizar_usuario` : `${API_URL}/Usuarios/agregar_usuario`;
+                url = type === "editar" ? `${API_URL}/Usuarios/actualizar_usuario` : `${API_URL}/Usuarios/agregar_usuario`;
+            } else if (categoria === "perfil") {
+                if (type === "editPerf") {
+                    url = `${API_URL}/Login/actualizar_perfil`;
+                } else if (type === "editDir") {
+                    url = `${API_URL}/Login/actualizar_direccion`;
+                }
             }
         }
-
         let data = new FormData();
-        if (type === "editar" || type === "editPerf") {
+        if (type === "editar" || type === "editPerf" || type === "editDir") {
             data.append('id', object.id);
         } else if (type === "agregar") {
             data.append('tipo', categoria);
         }
         if (imagen) {
-            data.append('imagen', imagen);
+            //console.log(imagen)//important
+            formData.imagen = imagen;
         }
         for (let key in formData) {
             data.append(key, formData[key]);
         }
 
-        // //impresion del formData
-        // for (let pair of data.entries()) {
-        //     console.log(pair[0]+ ', ' + pair[1]); 
-        // }
-        
+        //impresion del formData
+        for (let pair of data.entries()) {
+            console.log(pair[0] + ', ' + pair[1]);
+        }
+
         axios({
             method: 'post',
             url: url,
@@ -70,12 +76,14 @@ const Modal = ({ object, isOpen, closeModal, fieldTypes, name, type, recarga, ca
             headers: { 'Content-Type': 'multipart/form-data' }
         })
             .then(response => {
+                console.log(response)
                 if (response.data.success) {
                     recarga();
                     closeModal();
                     console.log(response.data.message)
                 } else {
                     console.error('Error al agregar el registro o cambio:', response.data.message);
+                    alert(response.data.message);
                 }
             })
             .catch(error => {

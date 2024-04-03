@@ -65,6 +65,7 @@ export default function Slidebar({ onToggleSidebar, isSidebarToggled }) {
                                 <Link className="nav-link" to="/Reportes/ventas">Ventas</Link>
                             </nav>
                         </div>
+                        
                     </div>
                 </div>
                 <div className="sb-sidenav-footer">
