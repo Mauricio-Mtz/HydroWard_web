@@ -122,7 +122,15 @@ export default function Product() {
                   <div className="card-body">
                     <ul className="list-unstyled mb-0 text-dark">
                       <li><h3>{prod.nombre}</h3></li>
-                      <li><h4>${prod.precio}</h4></li>
+                      <li className='d-flex justify-content-between'>
+                        <h4>${prod.precio}</h4>
+                        {prod.descuento !== null && (
+                          <>
+                            <h4 className='text-danger'>-{prod.descuento}%</h4>
+                            <h4 className='text-warning'>${(prod.precio - ((prod.precio / 100) * prod.descuento)).toFixed(2)}</h4>
+                          </>
+                        )}
+                      </li>
                       <li>{prod.descripcion}</li>
                       <li className='text-end'><strong>Stock: </strong>{prod.stock} {prod.stock > 1 ? "unidades" : "unidad"}</li>
                     </ul>

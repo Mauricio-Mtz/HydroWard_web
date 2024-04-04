@@ -70,7 +70,7 @@ export default function Slidebar({ onToggleSidebar, isSidebarToggled }) {
                 </div>
                 <div className="sb-sidenav-footer">
                     <div className="small">Sesion de: </div>
-                    {sesion.nombre + " " + sesion.apellido}
+                    {sesion && sesion.nombre + " " + sesion.apellido}
                 </div>
                 <button style={{ position: 'absolute', left: '100%', zIndex: 2 }} className="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" onClick={onToggleSidebar}>
                     {isSidebarToggled ? <FaArrowLeft /> : <FaArrowRight />}

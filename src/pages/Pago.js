@@ -76,10 +76,19 @@ export default function Pago() {
             subtotal = subtotal - iva;
             setTotales({ totalProductos, subtotal, iva, total });
         } else if (tipoCompra === "producto") {
-            const subtotal = cantidad * object.precio;
-            const iva = subtotal * 0.16;
-            const total = subtotal + iva;
-            setTotales({ totalProductos: 1, subtotal, iva, total });
+            if (object.descuento !== null) {
+                let subtotal = cantidad * (object.precio - ((object.precio / 100) * object.descuento)).toFixed(2);
+                const iva = subtotal * 0.16;
+                const total = subtotal;
+                subtotal = subtotal - iva
+                setTotales({ totalProductos: 1, subtotal, iva, total });
+            } else {
+                let subtotal = cantidad * (object.precio);
+                const iva = subtotal * 0.16;
+                const total = subtotal;
+                subtotal = subtotal - iva
+                setTotales({ totalProductos: 1, subtotal, iva, total });
+            }
         }
     };
 
@@ -97,6 +106,7 @@ export default function Pago() {
             formData.append('usuario_id', sesion.id);
             formData.append('producto_id', object.id);
             formData.append('cantidad', cantidad);
+            formData.append('monto', totales.total);
         }
 
         axios({
@@ -117,9 +127,6 @@ export default function Pago() {
                 alert("error");
             });
     };
-
-
-
 
     const [isPayPalScriptLoaded, setPayPalScriptLoaded] = useState(false);
 
@@ -190,8 +197,8 @@ export default function Pago() {
                                         <p>{`${cantidad} uds.`}</p>
                                         <p className="my-0">{object.nombre}</p>
                                         <div className='d-grid'>
-                                            <span className="text-body-secondary">${object.precio}</span>
-                                            <span className="text-body-secondary">${totales.subtotal}</span>
+                                            <span className="text-body-secondary">${totales.total}</span>
+                                            <span className="text-body-secondary">${totales.subtotal.toFixed(2)}</span>
                                         </div>
                                     </li>
                                 )}

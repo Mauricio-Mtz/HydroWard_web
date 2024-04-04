@@ -100,12 +100,19 @@ export default function Catalogue(props) {
                                         className="card-img-top"
                                         src={process.env.PUBLIC_URL + "/images/notFound.png"}
                                         alt="Not Found"
-                                        style={{ maxHeight: "306.5px" }}
                                     />
                                 )}
-                                <div className="card-body d-grid">
+                                <div className="card-body d-grid text-center">
                                     <h5 className="card-title h-50">{product.nombre}</h5>
-                                    <p className="card-text h-25">Precio: ${product.precio}</p>
+                                    <div className='d-flex justify-content-between'>
+                                        <p className="card-texttext-success text-center">Precio: ${product.precio}</p>
+                                        {product.descuento !== null && (
+                                            <>
+                                                <p className="card-text text-info">-{product.descuento}%</p>
+                                                <p className="card-text text-warning">Final: {(product.precio - ((product.precio / 100) * product.descuento)).toFixed(2)}%</p>
+                                            </>
+                                        )}
+                                    </div>
                                     <div className="d-flex">
                                         {product.tipo !== "estanques" && (
                                             <button
