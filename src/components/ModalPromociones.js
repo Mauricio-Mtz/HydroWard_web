@@ -24,15 +24,27 @@ export default function ModalPromociones({ showModal, setShowModal, productoId, 
         formData.append('fecha_fin', fechaFin);
         formData.append('descuento', descuento);
         formData.append('producto_id', productoId);
-
-        try {
-            const response = await axios.post(`${API_URL}/Promociones/agregar_promocion`, formData);
-            console.log(response.data);
-            handleClose();
-            handleCloseModal(true); // Llamada a la función de retorno con valor verdadero
-        } catch (error) {
-            console.error(error);
-        }
+        
+        axios({
+            method: 'post',
+            url: `${API_URL}/Promociones/agregar_promocion`,
+            data: formData,
+            headers: { 'Content-Type': 'multipart/form-data' }
+        })
+            .then(response => {
+                console.log(response)
+                if (response.data.success) {
+                    console.log(response.data.message)
+                    handleClose();
+                    handleCloseModal(true); 
+                } else {
+                    console.error('Error al agregar el registro o cambio:', response.data.message);
+                    alert(response.data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Informacion no enviada:', error);
+            });
     };
 
 

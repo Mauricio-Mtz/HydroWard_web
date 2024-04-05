@@ -11,22 +11,19 @@ export default function Pago() {
     const sesion = JSON.parse(localStorage.getItem('userData'));
     const { tipoCompra, objeto, cantidad } = useParams();
     const object = JSON.parse(decodeURIComponent(objeto));
-    const [direccion, setDireccion] = useState({
-        direccion: "",
-        ciudad: "",
-        estado: "",
-        cp: ""
-    });
+    const [direccion, setDireccion] = useState(null);
     const [totales, setTotales] = useState({
         totalProductos: 0,
         subtotal: 0,
         iva: 0,
         total: 0
     });
+    const [isPayPalScriptLoaded, setPayPalScriptLoaded] = useState(false);
 
     useEffect(() => {
         selectDir();
         calcularTotales();
+        loadPayPalScript();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
@@ -42,6 +39,7 @@ export default function Pago() {
             .then(response => {
                 if (response.data.success) {
                     alert("Dirección insertada correctamente.");
+                    setDireccion(response.data.direccion);
                 } else {
                     console.error('Error al agregar al usuario:', response.data.message);
                 }
@@ -128,24 +126,18 @@ export default function Pago() {
             });
     };
 
-    const [isPayPalScriptLoaded, setPayPalScriptLoaded] = useState(false);
+    const loadPayPalScript = () => {
+        try {
+            const script = document.createElement("script");
+            script.src = `https://www.paypal.com/sdk/js?client-id=Adg2w8GVLBfeD8yfOpHi_EVcEVhtJxDVtM4PH7Zj6nsePkUyzLSmFGr2VBp2yQh6-CmaggA3jjuOUhsj`;
+            script.async = true;
+            script.onload = () => setPayPalScriptLoaded(true);
 
-    useEffect(() => {
-        const loadPayPalScript = () => {
-            try {
-                const script = document.createElement("script");
-                script.src = `https://www.paypal.com/sdk/js?client-id=Adg2w8GVLBfeD8yfOpHi_EVcEVhtJxDVtM4PH7Zj6nsePkUyzLSmFGr2VBp2yQh6-CmaggA3jjuOUhsj`;
-                script.async = true;
-                script.onload = () => setPayPalScriptLoaded(true);
-
-                document.body.appendChild(script);
-            } catch (error) {
-                console.error("Error al cargar el script de PayPal:", error);
-            }
-        };
-
-        loadPayPalScript();
-    }, []);
+            document.body.appendChild(script);
+        } catch (error) {
+            console.error("Error al cargar el script de PayPal:", error);
+        }
+    };
 
     return (
         <>
@@ -156,19 +148,19 @@ export default function Pago() {
                         <div className="col-md-6 p-3">
                             <form className="container text-primary mt-5 mb-5">
                                 <div className="inputBox">
-                                    <input className="form-control mb-3" type="text" onChange={(event) => setDireccion({ ...direccion, direccion: event.target.value })} value={direccion.direccion} required></input>
+                                    <input className="form-control mb-3" type="text" onChange={(event) => setDireccion({ ...direccion, direccion: event.target.value })} value={direccion?.direccion || ''} required></input>
                                     <span>Direccion</span>
                                 </div>
                                 <div className="inputBox">
-                                    <input type="text" className="form-control mb-3" onChange={(event) => setDireccion({ ...direccion, ciudad: event.target.value, })} value={direccion.ciudad} required></input>
+                                    <input type="text" className="form-control mb-3" onChange={(event) => setDireccion({ ...direccion, ciudad: event.target.value, })} value={direccion?.ciudad || ''} required></input>
                                     <span>Ciudad</span>
                                 </div>
                                 <div className="inputBox">
-                                    <input type="text" className="form-control mb-3" onChange={(event) => setDireccion({ ...direccion, estado: event.target.value, })} value={direccion.estado} required></input>
+                                    <input type="text" className="form-control mb-3" onChange={(event) => setDireccion({ ...direccion, estado: event.target.value, })} value={direccion?.estado || ''} required></input>
                                     <span>Estado</span>
                                 </div>
                                 <div className="inputBox">
-                                    <input type="number" className="form-control mb-3" min={1} onChange={(event) => setDireccion({ ...direccion, cp: event.target.value, })} value={direccion.cp} required></input>
+                                    <input type="number" className="form-control mb-3" min={1} onChange={(event) => setDireccion({ ...direccion, cp: event.target.value, })} value={direccion?.cp || ''} required></input>
                                     <span>Código Postal</span>
                                 </div>
                                 <div className="text-center">
@@ -219,7 +211,6 @@ export default function Pago() {
                                 </li>
                             </ul>
                             <div className="py-1 text-center">
-                                <button className='btn btn-warning' onClick={handlePagar}>PayPal</button>
                                 <PayPalScriptProvider options={{ "client-id": "Adg2w8GVLBfeD8yfOpHi_EVcEVhtJxDVtM4PH7Zj6nsePkUyzLSmFGr2VBp2yQh6-CmaggA3jjuOUhsj" }}>
                                     {isPayPalScriptLoaded && (
                                         <PayPalButtons

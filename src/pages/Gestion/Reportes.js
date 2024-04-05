@@ -25,6 +25,7 @@ export default function Reportes() {
     const obtenerReporte = async () => {
         try {
             const response = await axios.get(`${API_URL}/Reportes/${accion}/${fechaInicio}/${fechaFin}`);
+            // console.log(response.data)
             if (response.data.success) {
                 setReporteData(response.data.reporte);
                 const columnNames = Object.keys(response.data.reporte[0]).filter(name => name !== 'promocion');
@@ -78,7 +79,7 @@ export default function Reportes() {
             const response = await axios.get(`${API_URL}/Promociones/eliminar_promocion/${id}`);
             if (response.data.success) {
                 obtenerReporte()
-                console.log(response.data.message)
+                // console.log(response.data.message)
             } else {
                 console.error('Error al modificar la promoción:', response.data.message);
             }
