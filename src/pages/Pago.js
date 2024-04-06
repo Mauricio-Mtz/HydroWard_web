@@ -4,6 +4,7 @@ import Navbar from './../components/Navbar';
 import axios from 'axios';
 import { useNavigate, useParams } from "react-router-dom";
 import GlobalContext from '../config/GlobalContext';
+import Product from './Product';
 
 export default function Pago() {
     const { API_URL } = useContext(GlobalContext);
@@ -20,6 +21,7 @@ export default function Pago() {
     });
     const [isPayPalScriptLoaded, setPayPalScriptLoaded] = useState(false);
 
+    // console.log(objeto)
     useEffect(() => {
         selectDir();
         calcularTotales();
@@ -73,7 +75,7 @@ export default function Pago() {
             const total = subtotal;
             subtotal = subtotal - iva;
             setTotales({ totalProductos, subtotal, iva, total });
-        } else if (tipoCompra === "producto") {
+        } else if (tipoCompra === "producto" || tipoCompra === "renovacion") {
             if (object.descuento !== null) {
                 let subtotal = cantidad * (object.precio - ((object.precio / 100) * object.descuento)).toFixed(2);
                 const iva = subtotal * 0.16;
@@ -89,8 +91,7 @@ export default function Pago() {
             }
         }
     };
-
-
+console.log(object)
     const handlePagar = () => {
         let ruta = "";
         let formData = new FormData();
@@ -104,6 +105,13 @@ export default function Pago() {
             formData.append('usuario_id', sesion.id);
             formData.append('producto_id', object.id);
             formData.append('cantidad', cantidad);
+            formData.append('monto', totales.total);
+        } else if (tipoCompra === "renovacion") {
+            ruta = `${API_URL}/Pago/renovar`;
+            formData.append('usuario_id', sesion.id);
+            formData.append('producto_id', object.id);
+            formData.append('cantidad', cantidad);
+            formData.append('detalle_venta', object.detalle_venta_id);
             formData.append('monto', totales.total);
         }
 

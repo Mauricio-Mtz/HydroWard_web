@@ -3,9 +3,11 @@ import Navbar from '../components/Navbar';
 import QRCode from 'qrcode.react';
 import axios from 'axios';
 import GlobalContext from '../config/GlobalContext';
+import { useNavigate } from 'react-router-dom';
 
 export default function History() {
     const { API_URL } = useContext(GlobalContext);
+    const navigate = useNavigate();
     const sesion = JSON.parse(localStorage.getItem('userData'));
     const [selectedCategory, setSelectedCategory] = useState('Productos comprados');
     const [historial, setHistorial] = useState([]);
@@ -24,6 +26,36 @@ export default function History() {
             .then(response => {
                 if (response.data.success) {
                     setHistorial(response.data.historial);
+                } else {
+                    console.error(response.data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error al obtener productos:', error);
+            });
+    };
+
+    const handleRenovarSuscripcion = (producto) => {
+        axios
+            .get(`${API_URL}/catalogo/producto/${producto.id}`)
+            .then(response => {
+                if (response.data.success) {
+                    if (response.data.producto.stock === "0") {
+                        alert("De momento no podemos renovar tu suscripción debido a que el producto se ha terminado")
+                    } else {
+                        const productoConDetalleVenta = {
+                            ...response.data.producto,
+                            detalle_venta_id: producto.detalle_venta_id
+                        };
+
+                        const productoString = encodeURIComponent(JSON.stringify(productoConDetalleVenta));
+
+                        if (!sesion || (sesion && sesion.tipo !== "cliente")) {
+                            navigate(`/Pago/renovacion/${productoString}/1`)
+                        } else {
+                            navigate(`/Pago/renovacion/${productoString}/1`)
+                        }
+                    }
                 } else {
                     console.error(response.data.message);
                 }
@@ -60,13 +92,16 @@ export default function History() {
                         const subtotal = monto - iva;
                         return (
                             <div key={venta.venta_id} className="col mb-2">
-                                <div className="card">
+                                <div className="card mb-2">
                                     <div className="card-body">
                                         <h5 className="card-title text-warning">Venta ID: {venta.venta_id}</h5>
                                         <p className="card-text text-end">Fecha: {venta.fecha}</p>
                                         <div className="list-group">
                                             {venta.productos.map(producto => (
-                                                <div className='list-group-item ' key={producto.nombre}>
+                                                <div key={producto.id} className={`list-group-item ${selectedCategory === 'Suscripciones' && producto.tipo === 'estanques' && producto.qr ?
+                                                    producto.suscripcion === 'no registrado' ? 'bg-warning' :
+                                                        producto.suscripcion === 'activo' ? 'bg-success' :
+                                                            producto.suscripcion === 'inactivo' ? 'bg-danger' : '' : ''}`}>
                                                     <div className="d-flex justify-content-between align-items-center">
                                                         <div>
                                                             <h6 className="mb-1">{producto.nombre}</h6>
@@ -76,10 +111,15 @@ export default function History() {
                                                         <span className="badge bg-info text-dark rounded-pill">{producto.tipo.toUpperCase()}</span>
                                                     </div>
                                                     {selectedCategory === 'Suscripciones' && producto.tipo === 'estanques' && producto.qr && (
-                                                        <div className='d-grid alint-items-center justify-content-center text-center'>
-                                                            <QRCode value={producto.qr} className='p-1 bg-white rounded' />
-                                                            <p className='container border rounded mt-1'>{producto.qr}</p>
-                                                        </div>
+                                                        <>
+                                                            <div className='d-grid alint-items-center justify-content-center text-center'>
+                                                                <QRCode value={producto.qr} className='p-1 bg-white rounded' />
+                                                                <p className='container border rounded mt-1'>{producto.qr}</p>
+                                                            </div>
+                                                        </>
+                                                    )}
+                                                    {selectedCategory === 'Suscripciones' && producto.suscripcion === 'inactivo' && (
+                                                        <button className="btn btn-primary w-100" onClick={() => handleRenovarSuscripcion(producto)}>Renovar Suscripción</button>
                                                     )}
                                                 </div>
                                             ))}
