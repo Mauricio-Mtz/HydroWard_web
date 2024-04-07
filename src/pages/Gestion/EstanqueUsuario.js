@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from "axios";
 import SlideBar from '../../components/Slidebar';
 import Navbar from '../../components/Navbar';
@@ -9,12 +10,25 @@ import MapEstanques from '../../components/MapEstanques';
 
 export default function EstanqueUsuario() {
     const { API_URL } = useContext(GlobalContext);
+    const sesion = JSON.parse(localStorage.getItem('userData'));
+    const navigate = useNavigate();
     const [isSidebarToggled, setIsSidebarToggled] = useState(false);
     const [usuarios, setUsuarios] = useState([]);
     const [columnas, setColumnas] = useState([]);
     const [showGrafica, setShowGrafica] = useState(false);
     const [showMapas, setShowMapas] = useState(false);
     const [estanques, setEstanques] = useState([]);
+
+    useEffect(() => {
+        obtenerUsuarios();
+        if (sesion) {
+            if (sesion.tipo === "cliente") {
+                navigate("/")
+            }
+        } else{
+            navigate('/')
+        }
+    }, []);
 
     const toggleSidebar = () => {
         setIsSidebarToggled(!isSidebarToggled);
@@ -77,10 +91,6 @@ export default function EstanqueUsuario() {
                 console.error('Error al obtener usuario:', error);
             });
     };
-
-    useEffect(() => {
-        obtenerUsuarios();
-    }, []);
 
     const handleGrafica = (estanque) => {
         // Obtener los IDs y nombres de los estanques del usuario actual

@@ -17,6 +17,12 @@ export default function GrafEstanques(props) {
     const [phData, setPhData] = useState([]);
     const [conteoPecesData, setConteoPecesData] = useState([]);
     const [selectedEstanque, setSelectedEstanque] = useState(null);
+    const [scatterData, setScatterData] = useState()
+    console.log(props)
+    console.log(temperaturaData)
+    console.log(phData)
+    console.log(conteoPecesData)
+
 
     useEffect(() => {
         const fetchData = async () => {
@@ -30,6 +36,7 @@ export default function GrafEstanques(props) {
                     let temperaturaList = [];
                     let phList = [];
                     let conteoPecesList = [];
+                    let scatterDataList = [];
 
                     querySnapshot.docs.forEach(doc => {
                         const data = doc.data();
@@ -46,6 +53,8 @@ export default function GrafEstanques(props) {
                         // Conteo de peces
                         const conteoPeces = data.conteo;
                         conteoPecesList.push([fecha, conteoPeces]);
+
+                        scatterDataList.push({ x: temperatura, y: ph, z: conteoPeces });
                     });
 
                     // Ordena los datos por fecha
@@ -56,6 +65,10 @@ export default function GrafEstanques(props) {
                     setTemperaturaData(temperaturaList);
                     setPhData(phList);
                     setConteoPecesData(conteoPecesList);
+                    // Ordena los datos por temperatura
+                    scatterDataList.sort((a, b) => a.x - b.x);
+
+                    setScatterData(scatterDataList);
                 });
 
                 // Limpia la escucha cuando el componente se desmonta
@@ -115,7 +128,60 @@ export default function GrafEstanques(props) {
             }]
         };
     };
-    
+
+    const options = (title, data) => {
+
+        return {
+            title: {
+                text: 'pH y Cantidad de Peces vs Temperatura'
+            },
+            xAxis: {
+                title: {
+                    text: 'Temperatura (°C)'
+                }
+            },
+            yAxis: {
+                title: {
+                    text: 'pH'
+                }
+            },
+            series: [{
+                type: 'scatter',
+                data: data, // usa los datos de Firebase
+                marker: {
+                    radius: 5, // tamaño base para los puntos
+                    symbol: 'circle' // forma de los puntos
+                }
+            }],
+            plotOptions: {
+                scatter: {
+                    marker: {
+                        radius: 5,
+                        states: {
+                            hover: {
+                                enabled: true,
+                                lineColor: 'rgb(100,100,100)'
+                            }
+                        }
+                    },
+                    states: {
+                        hover: {
+                            marker: {
+                                enabled: false
+                            }
+                        }
+                    },
+                    tooltip: {
+                        headerFormat: '<b>{series.name}</b><br>',
+                        pointFormat: 'Temperatura: {point.x}°C, pH: {point.y}, Cantidad de Peces: {point.z}'
+                    }
+                }
+            }
+
+        };
+    };
+
+
     return (
         <>
             <Modal show={props.show} onHide={props.onHideGrafica} size='xl'>
@@ -151,6 +217,12 @@ export default function GrafEstanques(props) {
                                         className="mt-2"
                                         highcharts={Highcharts}
                                         options={getGraficaOptions("Grafica en funcion de la cantidad de peces", conteoPecesData)}
+                                    />
+                                </div>
+                                <div className="mt-2">
+                                    <HighchartsReact
+                                        highcharts={Highcharts}
+                                        options={options("Grafica de dispersion en funcion de todos los datos", scatterData)}
                                     />
                                 </div>
                             </>

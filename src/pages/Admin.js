@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from "axios";
 import SlideBar from '../components/Slidebar';
 import Navbar from '../components/Navbar';
@@ -7,6 +8,8 @@ import GlobalContext from '../config/GlobalContext';
 
 export default function Admin() {
     const { API_URL } = useContext(GlobalContext);
+    const sesion = JSON.parse(localStorage.getItem('userData'));
+    const navigate = useNavigate();
     const [isSidebarToggled, setIsSidebarToggled] = useState(false);
     const [usuarios, setUsuarios] = useState([]);
     const [columnas, setColumnas] = useState([]);
@@ -18,6 +21,13 @@ export default function Admin() {
 
     useEffect(() => {
         handleUsuarios();
+        if (sesion) {
+            if (sesion.tipo === "cliente") {
+                navigate("/")
+            }
+        } else{
+            navigate('/')
+        }
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 

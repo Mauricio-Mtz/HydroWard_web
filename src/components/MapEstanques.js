@@ -5,15 +5,12 @@ import { ModalTitle } from 'react-bootstrap';
 import Modal from 'react-bootstrap/Modal';
 import { GoogleMap, useJsApiLoader, Marker } from '@react-google-maps/api';
 
-const center = {
-    lat: 20.656,
-    lng: -100.39
-};
-
 export default function MapEstanques(props) {
     const { API_URL } = useContext(GlobalContext);
     const [selectedEstanque, setSelectedEstanque] = useState(null);
-    // console.log(props.idEstanques[0].latitud)
+    const [map, setMap] = React.useState(null)
+    const [center, setCenter] = useState({ lat: 20.588085, lng: -100.387941 });
+
     useEffect(() => {
         const fetchData = () => {
             axios
@@ -40,9 +37,7 @@ export default function MapEstanques(props) {
         id: 'google-map-script',
         googleMapsApiKey: "AIzaSyAgUMEHsBYpjuQg8SkQcEQl1fDsr9W0Ptw"
     })
-
-    const [map, setMap] = React.useState(null)
-
+    
     const onLoad = React.useCallback(function callback(map) {
         const bounds = new window.google.maps.LatLngBounds(center);
         map.fitBounds(bounds);
@@ -61,13 +56,18 @@ export default function MapEstanques(props) {
                 </Modal.Header>
                 <Modal.Body>
                     <div className="card-body">
-                        <div className="d-flex justify-content-around">
-                            {props.idEstanques.map(estanque => (
-                                <button key={estanque.id} className="btn btn-warning w-100 m-1" onClick={() => setSelectedEstanque(estanque)}>
-                                    {estanque.id}.- {estanque.nombre}
-                                </button>
-                            ))}
-                        </div>
+                        {props.idEstanques.map(estanque => (
+                            <button
+                                key={estanque.id}
+                                className="btn btn-warning w-100 m-1"
+                                onClick={() => {
+                                    setSelectedEstanque(estanque);
+                                    setCenter({ lat: parseFloat(estanque.latitud), lng: parseFloat(estanque.longitud) });
+                                }}
+                            >
+                                {estanque.id}.- {estanque.nombre}
+                            </button>
+                        ))}
                         <div>
                             {isLoaded ? (
                                 <GoogleMap
@@ -76,14 +76,16 @@ export default function MapEstanques(props) {
                                         height: '400px'
                                     }}
                                     center={center}
-                                    zoom={14}
+                                    zoom={12}
                                     onLoad={onLoad}
                                     onUnmount={onUnmount}
                                 >
-                                    <Marker
-                                        position={center}
-                                    />
-                                    <></>
+                                    {props.idEstanques.map(estanque => (
+                                        <Marker 
+                                            key={estanque.id}
+                                            position={{ lat: parseFloat(estanque.latitud), lng: parseFloat(estanque.longitud) }}
+                                        />
+                                    ))}
                                 </GoogleMap>
                             ) : <></>}
                         </div>
@@ -92,8 +94,7 @@ export default function MapEstanques(props) {
                 <Modal.Footer>
                     <button className='btn btn-warning' onClick={props.onHideGrafica}>
                         Continuar
-                    </
-                    button>
+                    </button>
                 </Modal.Footer>
             </Modal >
 

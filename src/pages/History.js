@@ -14,6 +14,13 @@ export default function History() {
 
     useEffect(() => {
         obtenerHistorial();
+        if (sesion) {
+            if (sesion.tipo === "administrador") {
+                navigate("/")
+            }
+        } else{
+            navigate('/')
+        }
     }, []);
 
     const handleCategoryChange = (category) => {

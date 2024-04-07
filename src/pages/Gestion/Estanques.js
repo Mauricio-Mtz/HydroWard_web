@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from "axios";
 import SlideBar from '../../components/Slidebar';
 import Navbar from '../../components/Navbar';
@@ -8,6 +9,8 @@ import Modal from './../../components/Modal';
 
 export default function Estanques() {
     const { API_URL } = useContext(GlobalContext);
+    const sesion = JSON.parse(localStorage.getItem('userData'));
+    const navigate = useNavigate();
     const [isSidebarToggled, setIsSidebarToggled] = useState(false);
     const [productos, setProductos] = useState([]);
     const [columnas, setColumnas] = useState([]);
@@ -25,6 +28,16 @@ export default function Estanques() {
         "imagen": "file"
     };
 
+    useEffect(() => {
+        obtenerProductos();
+        if (sesion) {
+            if (sesion.tipo === "cliente") {
+                navigate("/")
+            }
+        } else{
+            navigate('/')
+        }
+    }, []);
 
     const toggleSidebar = () => {
         setIsSidebarToggled(!isSidebarToggled);
@@ -70,10 +83,6 @@ export default function Estanques() {
                 console.error('Error al obtener productos:', error);
             });
     };
-
-    useEffect(() => {
-        obtenerProductos();
-    }, []);
 
     const handleEditar = (producto) => {
         setName("Editar Estanque")

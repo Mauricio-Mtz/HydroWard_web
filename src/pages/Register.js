@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react'
+import React, { useState, useContext, useEffect } from 'react'
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom'
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
@@ -6,6 +6,7 @@ import GlobalContext from '../config/GlobalContext';
 
 export default function Register() {
     const { API_URL } = useContext(GlobalContext);
+    const sesion = JSON.parse(localStorage.getItem('userData'));
     const navigate = useNavigate();
 
     const [nombre, setNombre] = useState('');
@@ -18,6 +19,12 @@ export default function Register() {
     const toggleMostrarContrasena = () => {
         setMostrarContrasena(!mostrarContrasena);
     };
+    
+    useEffect(() => {
+        if (sesion) {
+            navigate("/")   
+        }
+    }, [])
 
     const register = (event) => {
         event.preventDefault();

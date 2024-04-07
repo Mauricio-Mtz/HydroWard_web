@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from "axios";
 import SlideBar from '../../components/Slidebar';
 import Navbar from '../../components/Navbar';
@@ -8,6 +9,8 @@ import Modal from './../../components/Modal';
 
 export default function Clientes() {
     const { API_URL } = useContext(GlobalContext);
+    const sesion = JSON.parse(localStorage.getItem('userData'));
+    const navigate = useNavigate();
     const [isSidebarToggled, setIsSidebarToggled] = useState(false);
     const [usuarios, setUsuarios] = useState([]);
     const [columnas, setColumnas] = useState([]);
@@ -25,6 +28,16 @@ export default function Clientes() {
         "tipo": "text",
     };
 
+    useEffect(() => {
+        obtenerUsuarios();
+        if (sesion) {
+            if (sesion.tipo === "cliente") {
+                navigate("/")
+            }
+        } else{
+            navigate('/')
+        }
+    }, []);
 
     const toggleSidebar = () => {
         setIsSidebarToggled(!isSidebarToggled);
@@ -70,10 +83,6 @@ export default function Clientes() {
                 console.error('Error al eliminar usuario:', error);
             });
     };
-
-    useEffect(() => {
-        obtenerUsuarios();
-    }, []);
 
     const handleEditar = (usuario) => {
         setName("Editar Administrador")

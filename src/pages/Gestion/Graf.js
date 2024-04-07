@@ -1,10 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import '../../config/firebaseConfig';
 import { getFirestore, addDoc, collection } from 'firebase/firestore';
 
 export default function Graf() {
     const [inputValue1, setInputValue1] = useState("");
     const [inputValue2, setInputValue2] = useState("");
+    const sesion = JSON.parse(localStorage.getItem('userData'));
+    const navigate = useNavigate();
 
     const db = getFirestore();
 

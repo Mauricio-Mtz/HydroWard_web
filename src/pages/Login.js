@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { useNavigate, Link } from "react-router-dom";
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import axios from 'axios';
@@ -7,6 +7,7 @@ import { useGoogleLogin } from '@react-oauth/google';
 
 export default function Login() {
     const { API_URL } = useContext(GlobalContext);
+    const sesion = JSON.parse(localStorage.getItem('userData'));
     const navigate = useNavigate();
     const [correo, setCorreo] = useState('');
     const [contrasena, setContrasena] = useState('');
@@ -15,6 +16,12 @@ export default function Login() {
     const toggleMostrarContrasena = () => {
         setMostrarContrasena(!mostrarContrasena);
     };
+
+    useEffect(() => {
+        if (sesion) {
+            navigate("/")   
+        }
+    }, [])
 
     const login = async (e) => {
         e.preventDefault();

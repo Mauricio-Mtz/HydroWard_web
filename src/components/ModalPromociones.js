@@ -50,10 +50,6 @@ export default function ModalPromociones({ showModal, setShowModal, productoId, 
 
     return (
         <>
-            <Button variant="primary" onClick={handleShow}>
-                Agregar promoción
-            </Button>
-
             <Modal show={showModal} onHide={handleClose}>
                 <Modal.Header closeButton>
                     <Modal.Title>Agregar promoción</Modal.Title>

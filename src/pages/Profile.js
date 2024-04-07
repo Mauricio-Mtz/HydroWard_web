@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
+import { useNavigate } from "react-router-dom";
 import { FaUser, FaEye, FaEyeSlash } from 'react-icons/fa';
 import Navbar from '../components/Navbar';
 import axios from 'axios';
@@ -8,6 +9,7 @@ import Modal from '../components/Modal';
 export default function Profile() {
     const { API_URL } = useContext(GlobalContext);
     const sesion = JSON.parse(localStorage.getItem('userData'));
+    const navigate = useNavigate();
     const [perfil, setPerfil] = useState({});
     const [direccion, setDireccion] = useState({});
     const [mostrarContrasena, setMostrarContrasena] = useState(false);
@@ -23,6 +25,12 @@ export default function Profile() {
         "contrasena": "text",
         "cp": "number",
     }
+
+    useEffect(() => {
+        if (!sesion) {
+            navigate("/")
+        }
+    }, [])
 
     useEffect(() => {
         obtenerDatos();

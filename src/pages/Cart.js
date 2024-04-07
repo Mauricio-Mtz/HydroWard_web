@@ -19,8 +19,13 @@ export default function Cart() {
     });
 
     useEffect(() => {
-        if (!sesion) {
-            alert('Debes iniciar sesión para acceder al carrito.')
+        if (sesion) {
+            if (sesion.tipo === "administrador") {
+                navigate("/")
+            }
+        } else{
+            alert("Debes iniciar sesion")
+            navigate('/')
         }
     }, [sesion, navigate]);
 

@@ -26,6 +26,13 @@ export default function Pago() {
         selectDir();
         calcularTotales();
         loadPayPalScript();
+        if (sesion) {
+            if (sesion.tipo === "administrador") {
+                navigate("/")
+            }
+        } else{
+            navigate('/')
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
@@ -91,7 +98,7 @@ export default function Pago() {
             }
         }
     };
-console.log(object)
+
     const handlePagar = () => {
         let ruta = "";
         let formData = new FormData();

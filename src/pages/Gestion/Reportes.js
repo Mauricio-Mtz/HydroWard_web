@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from "axios";
 import SlideBar from '../../components/Slidebar';
 import Navbar from '../../components/Navbar';
@@ -6,9 +7,13 @@ import Tabla from './../../components/Tabla';
 import GlobalContext from '../../config/GlobalContext';
 import { useParams } from 'react-router-dom';
 import ModalPromociones from '../../components/ModalPromociones';
+import Highcharts from 'highcharts';
+import HighchartsReact from 'highcharts-react-official';
 
 export default function Reportes() {
     const { API_URL } = useContext(GlobalContext);
+    const sesion = JSON.parse(localStorage.getItem('userData'));
+    const navigate = useNavigate();
     const [isSidebarToggled, setIsSidebarToggled] = useState(false);
     const [reporteData, setReporteData] = useState([]);
     const [columnas, setColumnas] = useState([]);
@@ -20,6 +25,13 @@ export default function Reportes() {
 
     useEffect(() => {
         obtenerReporte();
+        if (sesion) {
+            if (sesion.tipo === "cliente") {
+                navigate("/")
+            }
+        } else{
+            navigate('/')
+        }
     }, [API_URL, accion, fechaInicio, fechaFin]);
 
     const obtenerReporte = async () => {
@@ -95,6 +107,62 @@ export default function Reportes() {
         }
     };
 
+    const generarDatosGrafica = () => {
+        switch (accion) {
+            case 'clientes':
+                return reporteData.map(item => ({
+                    name: `${item.nombre} ${item.apellido}`,
+                    y: parseInt(item.compras)
+                }));
+            case 'productos':
+                return reporteData.map(item => ({
+                    name: item.nombre,
+                    y: parseFloat(item.total)
+                }));
+            case 'ventas':
+                return reporteData.map(item => ({
+                    name: `${item.nombre} ${item.apellido}`,
+                    y: parseFloat(item.total)
+                }));
+            default:
+                return [];
+        }
+    };
+
+    const options = {
+        chart: {
+            plotBackgroundColor: null,
+            plotBorderWidth: null,
+            plotShadow: false,
+            type: 'pie'
+        },
+        title: {
+            text: 'Distribución de datos'
+        },
+        tooltip: {
+            pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+        },
+        accessibility: {
+            point: {
+                valueSuffix: '%'
+            }
+        },
+        plotOptions: {
+            pie: {
+                allowPointSelect: true,
+                cursor: 'pointer',
+                dataLabels: {
+                    enabled: true,
+                    format: '<b>{point.name}</b>: {point.percentage:.1f} %'
+                }
+            }
+        },
+        series: [{
+            name: 'Compras',
+            colorByPoint: true,
+            data: generarDatosGrafica()
+        }]
+    };
 
     return (
         <>
@@ -130,6 +198,11 @@ export default function Reportes() {
                                             setShowModal={setShowModal}
                                             productoId={productoId}
                                             handleCloseModal={handleCloseModal}
+                                        />
+                                        <HighchartsReact
+                                            className="mt-3"
+                                            highcharts={Highcharts}
+                                            options={options}
                                         />
                                     </div>
                                 </div>
