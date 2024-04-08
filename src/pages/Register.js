@@ -1,6 +1,6 @@
 import React, { useState, useContext, useEffect } from 'react'
+import { useNavigate, Link } from "react-router-dom";
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom'
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import GlobalContext from '../config/GlobalContext';
 
@@ -90,7 +90,7 @@ export default function Register() {
                                 <button className="btn btn-success">Registrarse</button>
                             </div>
                         </form>
-                        <a href='/' className="text-info text-center mt-1">Regresar a la tienda</a>
+                        <Link to='/' className="text-info text-center mt-1">Regresar a la tienda</Link>
                     </div>
                 </div>
             </div>

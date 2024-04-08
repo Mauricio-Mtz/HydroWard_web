@@ -100,13 +100,13 @@ export default function Login() {
                                 <span>Contraseña</span>
                                 <button className="btn btn-light" type="button" onClick={toggleMostrarContrasena}>{mostrarContrasena ? <FaEye /> : <FaEyeSlash />}</button>
                             </div>
-                            <a href='/Register' className="text-info text-center mt-1">¿No tienes cuenta? Crea una</a>
+                            <Link to='/Register' className="text-info text-center mt-1">¿No tienes cuenta? Crea una</Link>
                         </div>
                         <div className='d-grid'>
                             <button className="btn btn-success">Inicio de Sesión</button>
                         </div>
                     </form>
-                    <a href='/' className="text-info text-center mt-1">Regresar a la tienda</a>
+                    <Link to='/' className="text-info text-center mt-1">Regresar a la tienda</Link>
                     <div className='d-flex justify-content-around'>
                         <button className="btn m-1" onClick={loginGoogle}>
                             <Link>

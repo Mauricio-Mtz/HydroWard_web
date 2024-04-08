@@ -2,8 +2,8 @@ import React from 'react';
 import { HashRouter  as Router, Routes, Route } from 'react-router-dom';
 import GlobalContext from './config/GlobalContext';
 import { Catalogue, Login, Register, Profile, History, Product, Cart, Pago, Admin, Administradores, Clientes, Estanques, Alimentos, Suplementos, Reportes, GrafEstanques, Peces, EstanqueUsuario } from './pages/';
-const API_URL = 'http://localhost/HydroWardGod/hydroward_back';
-// const API_URL = 'http://dtai.uteq.edu.mx/~maumar214/hydroward_back';
+// const API_URL = 'http://localhost/HydroWardGod/hydroward_back';
+const API_URL = 'http://dtai.uteq.edu.mx/~maumar214/hydroward_back';
 
 function App() {
   return (
